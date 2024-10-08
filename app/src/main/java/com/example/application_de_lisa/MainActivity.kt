@@ -4,7 +4,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -14,9 +13,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -26,15 +23,15 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Serializable
 data class Film(val id: Int)
-@Serializable
-data class Profil(val id: Int)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,50 +44,52 @@ class MainActivity : ComponentActivity() {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                icon = {
+                                    Image(
+                                        painter = painterResource(R.drawable.th_4206553874),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(125.dp)
+                                    )
+                                },
+                                label = { Text("Moi.",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold ) },
+                                selected = currentDestination?.route == "home",
+                                onClick = { navController.navigate("home") }
+                            )
+
+                            NavigationBarItem(
+                                icon = {
+                                    Image(
+                                        painter = painterResource(R.drawable.th_4206553874),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(120.dp)
+                                    )
+                                },
+                                label = { Text("Viens voir les films.",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold ) },
+                                selected = currentDestination?.route == "film",
+                                onClick = { navController.navigate("film") }
+                            )
+                        }
+                    }
+                ) { innerPadding ->
                     NavHost(
                         navController,
-                        startDestination = "profil",
+                        startDestination = "home",
                         Modifier.padding(innerPadding)
                     ) {
-                        composable("profil") { ProfilScreen() }
+                        composable("home") { Home(innerPadding) }
                         composable("film") { FilmScreen() }
-                    }
-
-                    NavigationBar {
-                        NavigationBarItem(
-                            icon = {
-                                Image(
-                                    painter = painterResource(R.drawable.th_4206553874),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(125.dp)
-                                )
-                            },
-                            label = { Text("Mon profil") },
-                            selected = currentDestination?.route == "profil",
-                            onClick = { navController.navigate("profil") }
-                        )
-
-                        NavigationBarItem(
-                            icon = {
-                                Image(
-                                    painter = painterResource(R.drawable.th_4206553874),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(120.dp)
-                                )
-                            },
-                            label = { Text("Viens voir les films.") },
-                            selected = currentDestination?.route == "film",
-                            onClick = { navController.navigate("film") }
-                        )
                     }
                 }
             }
         }
     }
 }
-
-
-
