@@ -44,6 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.application_de_lisa.ui.theme.Application_De_LisaTheme
 
+@Composable
+fun ProfilScreen() {
+}
 
 
 @Composable
@@ -52,40 +55,31 @@ fun Home(padding: PaddingValues) {
         modifier = Modifier
             .fillMaxSize()
             .padding(padding),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Photo()
-        Spacer(modifier = Modifier.height(70.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // Increased space
         Description()
+        Spacer(modifier = Modifier.height(16.dp)) // Increased space
         Boutton()
-
-
     }
-
 }
 
 @Composable
-fun Photo () {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+fun Photo() {
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
-            .height(200.dp)
-            .fillMaxSize()
+            .size(200.dp) // Adjusted size for Box
             .clip(CircleShape)
-            .size(200.dp),
-
+            .border(BorderStroke(12.dp, Color.Magenta), CircleShape)
     ) {
-        
         Image(
             painterResource(R.drawable.kanye_west),
-            contentDescription = "Kanye" ,
+            contentDescription = "Kanye",
             modifier = Modifier
                 .clip(CircleShape)
                 .size(200.dp)
-                .border(
-                    BorderStroke(12.dp, Color.Magenta),
-                    CircleShape
-                )
         )
     }
 }
@@ -100,19 +94,19 @@ fun Description() {
             text = "Manager : KanyeWest@gmail.com",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom=8.dp)
+            modifier = Modifier.padding(top = 25.dp)
         )
         Text(
             text = "Soundcloud : Kanye.Music",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top=4.dp)
+            modifier = Modifier.padding(top = 50.dp)
         )
         Text(
             text = "Moi c'est Kanye.",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(25.dp)
+            modifier = Modifier.padding(top = 60.dp) // Increased bottom padding
         )
     }
 }
@@ -121,10 +115,11 @@ fun Description() {
 fun Boutton() {
     Button(
         onClick = {
+            // Action for button
         },
-        modifier = Modifier.padding(20.dp) // Marge autour du bouton
+        modifier = Modifier.padding(bottom= 60.dp)
     ) {
-        Text(text = "Viens voir mon dernier albulm !")
+        Text(text = "Viens voir mon dernier album !")
     }
 }
 
