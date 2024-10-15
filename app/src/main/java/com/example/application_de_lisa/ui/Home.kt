@@ -119,7 +119,7 @@ fun Boutton() {
         },
         modifier = Modifier.padding(bottom= 60.dp)
     ) {
-        Text(text = "Viens voir mon dernier album !")
+        Text(text = "Viens voir mon dernier album.")
     }
 }
 
