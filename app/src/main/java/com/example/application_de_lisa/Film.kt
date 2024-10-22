@@ -1,40 +1,32 @@
 package com.example.application_de_lisa
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import MainViewModel
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
-
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.runtime.getValue
+import coil.compose.AsyncImage
 
 @Composable
-fun Film(padding: PaddingValues) {
+fun Film(padding: PaddingValues, viewModel: MainViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +35,7 @@ fun Film(padding: PaddingValues) {
     ) {
         FilmText()
         Spacer(modifier = Modifier.height(10.dp)) // Increased space
-        MainScreen()
+        FilmsScreen(viewModel)
 
 
     }
@@ -69,68 +61,47 @@ fun FilmText() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScreen() {
-    var searchText by remember { mutableStateOf(TextFieldValue("Cherche moi")) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    // Box pour centrer le texte
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Mon Application",
-                            color = Color.White, // Couleur du texte
-                            textAlign = TextAlign.Center // Centre le texte
-                        )
-                    }
-                },
-                actions = {
-                    // Champ de recherche dans la TopAppBar
-                    TextField(
-                        value = searchText.text, // Utiliser le texte
-                        onValueChange = { newText -> searchText = TextFieldValue(newText) },
-                        modifier = Modifier
-                            .width(50.dp) // Ajuste la largeur du TextField
-                            .padding(end = 8.dp) // Ajoute un peu d'espace à droite
-                            .height(40.dp), // Limite la hauteur du TextField
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent, // Fond transparent pour le TextField
-                            focusedTextColor = Color.Black, // Couleur du texte lorsque le champ est focalisé
-                            unfocusedTextColor = Color.Black, // Couleur du texte lorsque le champ n'est pas focalisé
-                            focusedIndicatorColor = Color.Transparent, // Pas de ligne sous le TextField
-                            unfocusedIndicatorColor = Color.Transparent // Pas de ligne sous le TextField quand non focalisé
-                        ),
-                        placeholder = {
-                            Text(
-                                text = "Rechercher...",
-                                color = Color.Gray // Couleur du placeholder
-                            )
-                        }
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Gray, // Couleur de fond de la TopAppBar
-                    titleContentColor = Color.White // Couleur du texte du titre
-                ),
-                modifier = Modifier.height(56.dp) // Limite la hauteur de la TopAppBar
-            )
-        },
-        content = { innerPadding ->
-            // Utilise innerPadding pour éviter que le contenu ne soit caché par la TopAppBar
-            Column(modifier = Modifier.padding(innerPadding)) {
-                // Exemple de contenu
-                Text(
-                    text = "Voici le contenu principal",
-                    modifier = Modifier.padding(16.dp),
-                    color = Color.Black
-                )
-            }
+@Composable
+fun FilmsScreen(viewModel: MainViewModel) {
+
+    val films by viewModel.movies.collectAsState() // on a deja une listeoff()
+Column {
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getMovies()
+    }
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2))
+
+    {
+        items(films) { movie ->
+            MovieItem(movie = movie) // Passe le bon type ici
         }
-    )
+    }
 }
+    }
+
+
+@Composable
+fun MovieItem(movie: ModelMovies) {
+    Column(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Charge et affiche l'image du film
+        val imageUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = movie.title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp) // Hauteur fixe pour les images
+        )
+        Spacer(modifier = Modifier.height(8.dp)) // Espace entre l'image et le texte
+        Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
+    }
+}
+
