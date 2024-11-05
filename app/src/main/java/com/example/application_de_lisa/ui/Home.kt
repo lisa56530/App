@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 
 @Composable
 fun ProfilScreen() {
@@ -39,7 +40,7 @@ fun ProfilScreen() {
 
 
 @Composable
-fun Home(padding: PaddingValues) {
+fun Home(padding: PaddingValues,  navController : NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,6 +52,7 @@ fun Home(padding: PaddingValues) {
         Description()
         Spacer(modifier = Modifier.height(16.dp)) // Increased space
         Boutton()
+        Commencer(navController)
     }
 }
 
@@ -131,3 +133,11 @@ fun MyTopBar(title: String, onBackPress: () -> Unit) {
 }
 
 
+@Composable
+fun Commencer(navController: NavHostController) {
+    Button(
+        onClick = { navController.navigate("film") },
+    ) {
+        Text(text = "Regarde.")
+    }
+}

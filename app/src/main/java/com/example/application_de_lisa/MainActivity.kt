@@ -28,6 +28,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.toRoute
+import com.example.jaze.FilmDetailsScreen
+
+
+@Serializable
+class FilmDetails(val id: Int)
+
+
 
 
 class MainActivity : ComponentActivity() {
@@ -54,11 +62,11 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.size(125.dp)
                                     )
                                 },
-                                label = { Text("Moi.",
+                                label = { Text("Viens voir les films.",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold ) },
-                                selected = currentDestination?.route == "home",
-                                onClick = { navController.navigate("home") }
+                                selected = currentDestination?.route == "film",
+                                onClick = { navController.navigate("film") }
                             )
 
                             NavigationBarItem(
@@ -69,22 +77,39 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.size(120.dp)
                                     )
                                 },
-                                label = { Text("Viens voir les films.",
+                                label = { Text("Viens voir les séries.",
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold ) },
-                                selected = currentDestination?.route == "film",
-                                onClick = { navController.navigate("film") }
+                                selected = currentDestination?.route == "serie",
+                                onClick = { navController.navigate("serie") }
                             )
                         }
                     }
                 ) { innerPadding ->
                     NavHost(
                         navController,
-                        startDestination = "home",
-                        Modifier.padding(innerPadding)
+                        startDestination = "home"
+                    //  modifier = Modifier.padding(innerPadding) on l'enlève car sinon j'ai un espace
+                    //au dessus de mes films et séries
                     ) {
-                        composable("home") { Home(innerPadding) }
+                        composable("home") { Home(innerPadding, navController) }
                         composable("film") { Film(innerPadding, viewModel) }
+                        composable("serie") { Serie(innerPadding, viewModel) }
+
+                        composable<FilmDetails> { navBackStackEntry ->
+                            val filmInfos : FilmDetails = navBackStackEntry.toRoute()
+
+                            //on vérifie si l'id n'est pas vide
+
+                            FilmDetailsScreen(
+                                viewModel,
+                                navController,
+                                filmInfos.id
+                            )
+
+
+
+                    }
 
                     }
                 }

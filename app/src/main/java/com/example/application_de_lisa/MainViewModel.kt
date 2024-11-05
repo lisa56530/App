@@ -15,6 +15,8 @@ class MainViewModel : ViewModel() {
     private val apiKey = "b57151d36fecd1b693da830a2bc5766f"
     private val language = "fr-FR"
 
+
+
     val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory()).build()
 
@@ -26,14 +28,28 @@ class MainViewModel : ViewModel() {
 
     private val api = retrofit.create(Api::class.java)
 
-    // Assurez-vous que le type de données correspond à ce que vous attendez de l'API
     val movies = MutableStateFlow<List<ModelMovies>>(listOf())
+    val movieById =  MutableStateFlow<ModelMovies?>(null)
 
     fun getMovies() {
         viewModelScope.launch {
-                // Assurez-vous que la méthode lastmovies accepte les bons paramètres
-                movies.value = api.lastmovies(apiKey, language).results
+            movies.value = api.lastmovies(apiKey, language).results
 
         }
     }
-}
+
+
+        fun getMovieById(id_film: Int) {
+            viewModelScope.launch {
+                movieById.value = api.moviedetails(id_film, apiKey, language)
+            }
+        }
+
+        fun getSearchMovies(query: String) {
+            viewModelScope.launch {
+                movies.value = api.requestedmovies(apiKey, language, query).results
+            }
+        }
+
+    }
+
