@@ -1,37 +1,27 @@
-package com.example.jaze
+package com.example.application_de_lisa
 
-import MainViewModel
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.lazy.grid.items
 import androidx.navigation.NavController
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
-import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import com.example.application_de_lisa.FilmDetails
-import com.example.application_de_lisa.ModelMovies
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.text.font.FontWeight
 
 
 @Composable
-fun FilmDetailsScreen(ViewModel: MainViewModel,  navController: NavController, filmId: Int) {
+fun FilmDetailsScreen(ViewModel: MainViewModel, filmId: Int) {
 
     val film by ViewModel.movieById.collectAsState()
 
@@ -40,56 +30,29 @@ fun FilmDetailsScreen(ViewModel: MainViewModel,  navController: NavController, f
         ViewModel.getMovieById(filmId)
     }
 
-
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.padding(16.dp),
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    )
-    {
-        film?.let { infos ->
-
-            item(span = { GridItemSpan(2) }) {
-                Column {
-                    Spacer(modifier = Modifier.height(40.dp))
-                    Text(text = infos.title)
-                    Image(infos)
-                    Informations(infos)
-                }
-
+    film?.let { infos ->
+        LazyColumn(modifier = Modifier.padding(25.dp)) {
+            item {
+                Spacer(modifier = Modifier.size(22.dp))
+                Text(
+                    text = infos.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                )
             }
-
-
-
-            val lesActeurs=infos.credits.cast.take(6)
-
-            items(lesActeurs) { unActeur ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clickable {
-                            navController.navigate("acteurDetails/${unActeur.id}")
-                        }
-                ) {
-
-                    //Image(painterResource(id = unActeur.profilePath), contentDescription = unActeur.name)
-                    Text(text = unActeur.name)
-                }
+            item {
+                Image(infos)
+            }
+            item {
+                Informations(infos)
             }
         }
-
     }
 }
 
 
-
-
 @Composable
-fun Image(infos: ModelMovies){
+fun Image(infos: ModelMovies) {
     AsyncImage(
         model = "https://image.tmdb.org/t/p/w500${infos.poster_path}",
         contentDescription = null,
@@ -100,19 +63,18 @@ fun Image(infos: ModelMovies){
 }
 
 @Composable
-fun Informations(infos: ModelMovies){
-
-    Text(text = "Genres")
-    infos.genres.forEach { Genre ->
-        Text(text = Genre.name)
+fun Informations(infos: ModelMovies) {
+    Spacer(modifier = Modifier.size(8.dp))
+    Row {
+        Text(text = "Genres : ", fontWeight = FontWeight.Bold)
+        Text(text = infos.genres.joinToString { it.name })
     }
+    Spacer(modifier = Modifier.size(8.dp))
+    Row {
+        Text(text = "Nationalité : ", fontWeight = FontWeight.Bold)
+        Text(text = infos.origin_country.joinToString())
+    }
+    Spacer(modifier = Modifier.size(8.dp))
+    Text(text = "Synopsis : ", fontWeight = FontWeight.Bold)
     Text(text = infos.overview)
-    Text(text = infos.original_language)
-    Text(text = "Titre original: ${infos.original_title}")
-
-    //Text(text = "Nationalité: ${infos.origin_country.joinToString(", ")}")
-    Text(text = "Nationalité:")
-    infos.origin_country.forEach { country ->
-        Text(text = country)
-    }
 }
