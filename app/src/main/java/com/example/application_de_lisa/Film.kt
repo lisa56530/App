@@ -1,6 +1,6 @@
 package com.example.application_de_lisa
 
-import MainViewModel
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,24 +21,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 
 @Composable
-fun Film(padding: PaddingValues, viewModel: MainViewModel) {
+fun Film(padding: PaddingValues, viewModel: MainViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(padding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(22.dp))
         FilmText()
         Spacer(modifier = Modifier.height(10.dp))
-        FilmsScreen(viewModel)
-
-
+        FilmScreen(viewModel, navController)
     }
 }
-
 
 
 @Composable
@@ -48,55 +47,57 @@ fun FilmText() {
             .fillMaxWidth()
     ) {
         Text(
-            text = "Regarde mes films",
+            text = "Regarde mes films.",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(top = 5.dp)
-                .align(Alignment.Start) // Aligner le texte à gauche
+                .align(Alignment.Start)
         )
     }
 }
 
 
-
 @Composable
-fun FilmsScreen(viewModel: MainViewModel) {
+fun FilmScreen(viewModel: MainViewModel, navController: NavController) {
+    val films by viewModel.movies.collectAsState()
+    Column {
+        LaunchedEffect(Unit) {
+            viewModel.getMovies()
+        }
 
-    val films by viewModel.movies.collectAsState() // on a deja une listeoff()
-Column {
-    LaunchedEffect(Unit) {
-        viewModel.getMovies()
-    }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2)
+        )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2))
-
-    {
-        items(films) { movie ->
-            MovieItem(movie = movie) // Passe le bon type ici
+        {
+            items(films) { movie ->
+                FilmItem(movie = movie, navController)
+            }
         }
     }
 }
-}
 
 
 @Composable
-fun MovieItem(movie: ModelMovies) {
+fun FilmItem(movie: ModelMovies, navController: NavController) {
     Column(
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable {
+                navController.navigate(FilmDetails(movie.id))
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Charge et affiche l'image du film
         val imageUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
         AsyncImage(
             model = imageUrl,
             contentDescription = movie.title,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp) // Hauteur fixe pour les images
+                .height(200.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp)) // Espace entre l'image et le texte
+        Spacer(modifier = Modifier.height(8.dp))
         Text(text = movie.title, style = MaterialTheme.typography.titleMedium)
     }
 }
