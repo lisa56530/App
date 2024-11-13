@@ -11,5 +11,8 @@ import androidx.navigation.NavController
 
 @Composable
 fun Horror(innerPadding: PaddingValues) {
- 
+
     }
+@Composable
+fun HorrorItem(horror: collections, navController: NavController) {
+}
