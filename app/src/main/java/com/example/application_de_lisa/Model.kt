@@ -268,7 +268,7 @@ data class Result(
     val overview: String,
     val poster_path: String
 )
- 
+
 
 
 
