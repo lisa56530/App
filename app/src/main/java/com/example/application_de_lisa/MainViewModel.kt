@@ -33,6 +33,7 @@ class MainViewModel : ViewModel() {
     val serieById = MutableStateFlow<ModelSeries?>(null)
     val acteurs = MutableStateFlow<List<ModelActeurs>>(listOf())
     val acteurById = MutableStateFlow<ModelActeurs?>(null)
+    val collectionHorror = MutableStateFlow<List<Result>>(listOf())
 
     fun getMovies() {
         viewModelScope.launch {
@@ -91,5 +92,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
-}
+    fun getCollectionHorror () {
+        viewModelScope.launch {
+            collectionHorror.value = api.collection(apiKey,"horror", "fr").results
+        }
 
+    }
+}
