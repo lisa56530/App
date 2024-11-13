@@ -70,6 +70,9 @@ class ActeurDetails(val id: Int)
 @Serializable
 class Horror
 
+
+
+
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +114,7 @@ class MainActivity : ComponentActivity() {
                                             } else if (currentDestination?.hasRoute<Acteur>() == true) {
                                                 viewModel.getActeurs()
                                             } else if (currentDestination?.hasRoute<Horror>() == true) {
-
+                                                viewModel.getCollectionHorror()
                                             }
                                         },
                                         imageVector = Icons.Default.Close,
@@ -131,7 +134,10 @@ class MainActivity : ComponentActivity() {
                                         viewModel.getSearchSeries(it)
                                     } else if (currentDestination?.hasRoute<Acteur>() == true) {
                                         viewModel.getSearchActeurs(it)
+                                    } else if (currentDestination?.hasRoute<Horror>() == true) {
+                                        viewModel.getCollectionHorror()
                                     }
+
 
                                 },
                                 active = actif,
@@ -242,7 +248,7 @@ class MainActivity : ComponentActivity() {
                                         colors = NavigationBarItemDefaults.colors(
                                             indicatorColor = Color.Gray
                                         ),
-                                        onClick = { navController.navigate(Acteur()) }
+                                        onClick = { navController.navigate(Horror()) }
                                     )
                                 }
                             }
@@ -348,7 +354,7 @@ class MainActivity : ComponentActivity() {
                                             colors = NavigationRailItemDefaults.colors(
                                                 indicatorColor = Color.Gray
                                             ),
-                                            onClick = { navController.navigate(Acteur()) }
+                                            onClick = { navController.navigate(Horror()) }
                                         )
                                     }
 
@@ -372,7 +378,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable<Film> { Film(innerPadding, viewModel, navController) }
                                 composable<Serie> { Serie(innerPadding, viewModel, navController) }
-                                composable<Horror> { Horror() }
+                                composable<Horror> { Horror(innerPadding, viewModel, navController) }
                                 composable<Acteur> {
                                     Acteur(
                                         innerPadding,
